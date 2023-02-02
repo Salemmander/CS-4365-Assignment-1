@@ -16,3 +16,5 @@ tree = Tree()
 tree.create_node(initialState, tree.size())
 tree.create_node(1, tree.size(), parent=tree.size() - 1)
 tree.show()
+
+
