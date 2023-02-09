@@ -12,12 +12,10 @@ initialState = [
 
 
 def findStar(current_state):
-    row = 0
-    col = 0
-    for i in range(3):
-        for j in range(3):
-            if current_state[i][j] == '*':
-                return i, j
+    for index in range(3):
+        for jindex in range(3):
+            if current_state[index][jindex] == '*':
+                return index, jindex
 
 
 def switchStates(current_state, initial_index, new_index):
@@ -28,9 +26,7 @@ def switchStates(current_state, initial_index, new_index):
 
 def moveUp(current_state):
     starIndex = findStar(current_state)
-    if starIndex[0] == 0:
-        return "Cannot move up from this position"
-    else:
+    if starIndex[0] != 0:
         print("Move Up")
         newStarIndex = [starIndex[0] - 1, starIndex[1]]
         return switchStates(current_state, starIndex, newStarIndex)
@@ -38,9 +34,7 @@ def moveUp(current_state):
 
 def moveRight(current_state):
     starIndex = findStar(current_state)
-    if starIndex[1] == 2:
-        return "Cannot move right from this position"
-    else:
+    if starIndex[1] != 2:
         print("Move Right")
         newStarIndex = [starIndex[0], starIndex[1] + 1]
         return switchStates(current_state, starIndex, newStarIndex)
@@ -48,9 +42,7 @@ def moveRight(current_state):
 
 def moveDown(current_state):
     starIndex = findStar(current_state)
-    if starIndex[0] == 2:
-        return "Cannot move down from this position"
-    else:
+    if starIndex[0] != 2:
         print("Move Down")
         newStarIndex = [starIndex[0] + 1, starIndex[1]]
         return switchStates(current_state, starIndex, newStarIndex)
@@ -58,16 +50,25 @@ def moveDown(current_state):
 
 def moveLeft(current_state):
     starIndex = findStar(current_state)
-    if starIndex[1] == 0:
-        return "Cannot move left from this position"
-    else:
+    if starIndex[1] != 0:
         print("Move Left")
         newStarIndex = [starIndex[0], starIndex[1] - 1]
         return switchStates(current_state, starIndex, newStarIndex)
 
 
-def DFS(current_state, limit):
-    pass
+def expand(current_state):
+    nextStates = [moveUp(current_state), moveRight(current_state), moveDown(current_state), moveLeft(current_state)]
+    return nextStates
+
+
+def DFS(current_state, limit, iteration=0):
+    if current_state == goalState or iteration == limit:
+        return
+    else:
+        DFS(moveUp(current_state), limit, iteration + 1)
+        DFS(moveRight(current_state), limit, iteration + 1)
+        DFS(moveDown(current_state), limit, iteration + 1)
+        DFS(moveLeft(current_state), limit, iteration + 1)
 
 
 def IDS(initial_state, limit):
@@ -92,11 +93,7 @@ def line():
 
 print("Initial State")
 printState(initialState)
-line()
-printState(moveUp(initialState))
-line()
-printState(moveDown(initialState))
-line()
-printState(moveRight(initialState))
-line()
-printState(moveLeft(initialState))
+for i in expand(initialState):
+    line()
+    printState(i)
+# DFS(initialState, 10)
