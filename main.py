@@ -117,10 +117,10 @@ def astar(current_state, heuristic, path=None, level=0, limit=10):
     for child in children:
         if child not in path:
             states_enqueued += 1
-            costs.append(h1(child))
+            costs.append(heuristic(child))
     minCost = costs.index(min(costs))
     path.append(children[minCost])
-    if astar(children[minCost], h1(children[minCost]), path, level + 1):
+    if astar(children[minCost], heuristic, path, level + 1):
         return path
     path.pop()
     path_states -= 1
@@ -139,7 +139,15 @@ def h1(current_state):
 
 
 def h2(current_state):
-    pass
+    global goalState
+    wrongTilesDifference = 0
+    if current_state is not None:
+        for index in range(3):
+            for jindex in range(3):
+                if current_state[index][jindex] != goalState[index][jindex] and current_state[index][jindex] != '*' and \
+                        goalState[index][jindex] != '*':
+                    wrongTilesDifference += int(current_state[index][jindex]) - int(goalState[index][jindex])
+    return wrongTilesDifference
 
 
 def printState(current_state):
@@ -182,8 +190,10 @@ elif algorithm == "ids":
     print("Iterative Deepening Search")
     printPath(IDS(initialState))
 elif algorithm == "astar1":
-    printPath(astar(initialState, h1(initialState)))
+    print("A* with first heuristic")
+    printPath(astar(initialState, h1))
 elif algorithm == "astar2":
-    pass
+    print("A* with second heuristic")
+    printPath(astar(initialState, h2))
 else:
     print("valid algorithm options are 'dfs', 'ids', 'astar1', and 'astar2'")
