@@ -97,11 +97,48 @@ def IDS(initial_state):
             return False
 
 
-def astar1(initial_state):
-    pass
+def astar(current_state, heuristic, path=None, level=0, limit=10):
+    global path_states, states_enqueued
+    if path is None:
+        path = []
+    if current_state is not None:
+        path_states += 1
+        path.append(current_state)
+    else:
+        return False
+    costs = []
+    children = expand(current_state)
+    if current_state == goalState:
+        return path
+    if level == limit:
+        path.pop()
+        path_states -= 1
+        return False
+    for child in children:
+        if child not in path:
+            states_enqueued += 1
+            costs.append(h1(child))
+    minCost = costs.index(min(costs))
+    path.append(children[minCost])
+    if astar(children[minCost], h1(children[minCost]), path, level + 1):
+        return path
+    path.pop()
+    path_states -= 1
+    return False
 
 
-def astar2(initial_state):
+def h1(current_state):
+    global goalState
+    wrongTiles = 0
+    if current_state is not None:
+        for index in range(3):
+            for jindex in range(3):
+                if current_state[index][jindex] != goalState[index][jindex]:
+                    wrongTiles += 1
+    return wrongTiles
+
+
+def h2(current_state):
     pass
 
 
@@ -145,7 +182,7 @@ elif algorithm == "ids":
     print("Iterative Deepening Search")
     printPath(IDS(initialState))
 elif algorithm == "astar1":
-    pass
+    printPath(astar(initialState, h1(initialState)))
 elif algorithm == "astar2":
     pass
 else:
